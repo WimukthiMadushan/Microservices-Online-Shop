@@ -1,0 +1,17 @@
+target/
+HELP.md
+.mvn/wrapper/maven-wrapper.jar
+
+### IDEs ###
+.idea
+.vscode
+*.iml
+.classpath
+.project
+.settings
+.factorypath
+.springBeans
+.sts4-cache
+
+### Application ###
+mysql/
