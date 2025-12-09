@@ -3,10 +3,12 @@ package com.wimukthi.orderservice.services;
 
 import com.wimukthi.orderservice.client.InventoryClient;
 import com.wimukthi.orderservice.dto.OrderRequest;
+import com.wimukthi.orderservice.event.OrderPlacedEvent;
 import com.wimukthi.orderservice.models.Order;
 import com.wimukthi.orderservice.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,6 +21,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final InventoryClient inventoryClient;
+    private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
     public void placeOrder(OrderRequest orderRequest) {
         var isInProduct = inventoryClient.isInStock(orderRequest.skuCode(), orderRequest.quantity());
@@ -29,6 +32,12 @@ public class OrderService {
             order.setSkuCode(orderRequest.skuCode());
             order.setQuantity(orderRequest.quantity());
             orderRepository.save(order);
+
+            // send the message to the kafka topic
+            var orderPlacedEvent = new OrderPlacedEvent(order.getOrderNumber(), "wimukthimadushan6@gmail.com");
+            log.info("Order Placed Event is {}", orderPlacedEvent);
+            kafkaTemplate.send("order-placed", orderPlacedEvent);
+
         }
         else  {
             throw new RuntimeException("Product with SkuCode " + orderRequest.skuCode() + " is not in stock");
