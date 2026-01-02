@@ -1,0 +1,10 @@
+com\wimukthi\cartservice\model\CartItem.class
+com\wimukthi\cartservice\config\RestClientConfig.class
+com\wimukthi\cartservice\dto\OrderRequest$UserDetails.class
+com\wimukthi\cartservice\service\CartService.class
+com\wimukthi\cartservice\model\Cart.class
+com\wimukthi\cartservice\CartServiceApplication.class
+com\wimukthi\cartservice\client\OrderClient.class
+com\wimukthi\cartservice\dto\OrderRequest.class
+com\wimukthi\cartservice\controller\CartController.class
+com\wimukthi\cartservice\repository\CartRepository.class
