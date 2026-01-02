@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Layout from "@/components/layout/Layout";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { placeOrder } from "@/services/orderService";
 
 const Checkout = () => {
   const { items, subtotal, tax, total, clearCart } = useCart();
@@ -43,17 +44,37 @@ const Checkout = () => {
     e.preventDefault();
     setIsProcessing(true);
 
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      for (const item of items) {
+        await placeOrder({
+          skuCode: item.skuCode || item.id,
+          price: item.price,
+          quantity: item.quantity,
+          userDetails: {
+            email: formData.email,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+          },
+        });
+      }
 
-    setIsProcessing(false);
-    setOrderComplete(true);
-    clearCart();
-
-    toast({
-      title: "Order placed successfully!",
-      description: "Thank you for your purchase. You will receive a confirmation email shortly.",
-    });
+      clearCart();
+      setOrderComplete(true);
+      toast({
+        title: "Order placed successfully",
+        description: "Thank you for your purchase!",
+      });
+    } catch (error) {
+      console.error("Order failed", error);
+      toast({
+        title: "Order failed",
+        description:
+          "There was a problem placing your order. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (items.length === 0 && !orderComplete) {
@@ -81,11 +102,12 @@ const Checkout = () => {
             Thank you for your purchase
           </p>
           <p className="mb-8 text-sm text-muted-foreground">
-            Order #ORD-2024-{Math.random().toString(36).substr(2, 6).toUpperCase()}
+            Order #ORD-2024-
+            {Math.random().toString(36).substr(2, 6).toUpperCase()}
           </p>
           <p className="mb-8 max-w-md text-muted-foreground">
-            We've sent a confirmation email with your order details. 
-            Your items will be shipped within 2-3 business days.
+            We've sent a confirmation email with your order details. Your items
+            will be shipped within 2-3 business days.
           </p>
           <div className="flex gap-4">
             <Button asChild>
@@ -229,7 +251,10 @@ const Checkout = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
+                  <RadioGroup
+                    value={paymentMethod}
+                    onValueChange={setPaymentMethod}
+                  >
                     <div className="flex items-center space-x-2 rounded-lg border p-4">
                       <RadioGroupItem value="card" id="card" />
                       <Label htmlFor="card" className="flex-1 cursor-pointer">
@@ -300,7 +325,9 @@ const Checkout = () => {
 
                   <div className="flex items-center gap-2 rounded-lg bg-muted p-3 text-sm text-muted-foreground">
                     <Lock className="h-4 w-4" />
-                    <span>Your payment information is secure and encrypted</span>
+                    <span>
+                      Your payment information is secure and encrypted
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -332,7 +359,10 @@ const Checkout = () => {
                             Qty: {item.quantity}
                           </p>
                           <p className="text-sm font-medium">
-                            ${(item.product.price * item.quantity).toLocaleString()}
+                            $
+                            {(
+                              item.product.price * item.quantity
+                            ).toLocaleString()}
                           </p>
                         </div>
                       </div>
@@ -344,7 +374,12 @@ const Checkout = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                      <span>
+                        $
+                        {subtotal.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                        })}
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Shipping</span>
@@ -352,7 +387,12 @@ const Checkout = () => {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Tax</span>
-                      <span>${tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                      <span>
+                        $
+                        {tax.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                        })}
+                      </span>
                     </div>
                   </div>
 
@@ -360,7 +400,12 @@ const Checkout = () => {
 
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total</span>
-                    <span>${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span>
+                      $
+                      {total.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </span>
                   </div>
 
                   <Button
@@ -369,7 +414,11 @@ const Checkout = () => {
                     size="lg"
                     disabled={isProcessing}
                   >
-                    {isProcessing ? "Processing..." : `Pay $${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+                    {isProcessing
+                      ? "Processing..."
+                      : `Pay $${total.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                        })}`}
                   </Button>
                 </CardContent>
               </Card>

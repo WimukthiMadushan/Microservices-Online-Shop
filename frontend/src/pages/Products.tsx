@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Filter, SlidersHorizontal, Grid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,11 +22,29 @@ import {
 } from "@/components/ui/sheet";
 import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/ProductCard";
-import { products, categories, brands } from "@/data/products";
+import { categories, brands, Product } from "@/data/products";
+import { getProducts } from "@/services/productService";
 
 const Products = () => {
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data);
+      } catch (error) {
+        console.error("Failed to fetch products", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
@@ -85,7 +103,14 @@ const Products = () => {
     }
 
     return result;
-  }, [searchQuery, selectedCategories, selectedBrands, priceRange, sortBy]);
+  }, [
+    products,
+    searchQuery,
+    selectedCategories,
+    selectedBrands,
+    priceRange,
+    sortBy,
+  ]);
 
   const toggleCategory = (categoryId: string) => {
     setSelectedCategories((prev) =>
@@ -154,7 +179,10 @@ const Products = () => {
                 checked={selectedBrands.includes(brand)}
                 onCheckedChange={() => toggleBrand(brand)}
               />
-              <label htmlFor={`brand-${brand}`} className="text-sm cursor-pointer">
+              <label
+                htmlFor={`brand-${brand}`}
+                className="text-sm cursor-pointer"
+              >
                 {brand}
               </label>
             </div>
@@ -267,7 +295,11 @@ const Products = () => {
             </div>
 
             {/* Products Grid */}
-            {filteredProducts.length > 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+              </div>
+            ) : filteredProducts.length > 0 ? (
               <div
                 className={
                   viewMode === "grid"

@@ -2,6 +2,7 @@ export interface Product {
   id: string;
   name: string;
   description: string;
+  skuCode?: string;
   price: number;
   originalPrice?: number;
   image: string;
@@ -28,42 +29,48 @@ export const categories: Category[] = [
     id: "phones",
     name: "Smartphones",
     icon: "Smartphone",
-    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop",
     productCount: 24,
   },
   {
     id: "laptops",
     name: "Laptops",
     icon: "Laptop",
-    image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop",
     productCount: 18,
   },
   {
     id: "audio",
     name: "Audio",
     icon: "Headphones",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
     productCount: 32,
   },
   {
     id: "accessories",
     name: "Accessories",
     icon: "Watch",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop",
     productCount: 45,
   },
   {
     id: "gaming",
     name: "Gaming",
     icon: "Gamepad2",
-    image: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&h=300&fit=crop",
     productCount: 15,
   },
   {
     id: "cameras",
     name: "Cameras",
     icon: "Camera",
-    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=300&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=300&fit=crop",
     productCount: 12,
   },
 ];
@@ -72,10 +79,12 @@ export const products: Product[] = [
   {
     id: "1",
     name: "iPhone 15 Pro Max",
-    description: "The most powerful iPhone ever with A17 Pro chip, titanium design, and advanced camera system.",
+    description:
+      "The most powerful iPhone ever with A17 Pro chip, titanium design, and advanced camera system.",
     price: 1199,
     originalPrice: 1299,
-    image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&h=800&fit=crop",
       "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&h=800&fit=crop",
@@ -97,9 +106,11 @@ export const products: Product[] = [
   {
     id: "2",
     name: "Samsung Galaxy S24 Ultra",
-    description: "Ultimate Galaxy experience with Galaxy AI, 200MP camera, and S Pen included.",
+    description:
+      "Ultimate Galaxy experience with Galaxy AI, 200MP camera, and S Pen included.",
     price: 1299,
-    image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&h=800&fit=crop",
     ],
@@ -119,11 +130,13 @@ export const products: Product[] = [
   },
   {
     id: "3",
-    name: "MacBook Pro 16\"",
-    description: "Supercharged by M3 Pro or M3 Max chip. Built for pros who need a beast.",
+    name: 'MacBook Pro 16"',
+    description:
+      "Supercharged by M3 Pro or M3 Max chip. Built for pros who need a beast.",
     price: 2499,
     originalPrice: 2699,
-    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=800&fit=crop",
     ],
@@ -144,10 +157,12 @@ export const products: Product[] = [
   {
     id: "4",
     name: "Sony WH-1000XM5",
-    description: "Industry-leading noise canceling with Auto NC Optimizer and crystal-clear hands-free calling.",
+    description:
+      "Industry-leading noise canceling with Auto NC Optimizer and crystal-clear hands-free calling.",
     price: 349,
     originalPrice: 399,
-    image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=800&h=800&fit=crop",
     ],
@@ -168,9 +183,11 @@ export const products: Product[] = [
   {
     id: "5",
     name: "Apple Watch Ultra 2",
-    description: "The most rugged and capable Apple Watch. Built for exploration, adventure, and endurance.",
+    description:
+      "The most rugged and capable Apple Watch. Built for exploration, adventure, and endurance.",
     price: 799,
-    image: "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=800&h=800&fit=crop",
     ],
@@ -190,9 +207,11 @@ export const products: Product[] = [
   {
     id: "6",
     name: "PlayStation 5",
-    description: "Experience lightning-fast loading, deeper immersion with haptic feedback, and stunning games.",
+    description:
+      "Experience lightning-fast loading, deeper immersion with haptic feedback, and stunning games.",
     price: 499,
-    image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800&h=800&fit=crop",
     ],
@@ -213,9 +232,11 @@ export const products: Product[] = [
   {
     id: "7",
     name: "Sony Alpha A7 IV",
-    description: "Full-frame mirrorless camera with outstanding photo and video capabilities.",
+    description:
+      "Full-frame mirrorless camera with outstanding photo and video capabilities.",
     price: 2498,
-    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&h=800&fit=crop",
     ],
@@ -235,9 +256,11 @@ export const products: Product[] = [
   {
     id: "8",
     name: "Dell XPS 15",
-    description: "Premium laptop with stunning 4K OLED display and powerful Intel Core i9 processor.",
+    description:
+      "Premium laptop with stunning 4K OLED display and powerful Intel Core i9 processor.",
     price: 1899,
-    image: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&h=800&fit=crop",
     ],
@@ -257,9 +280,11 @@ export const products: Product[] = [
   {
     id: "9",
     name: "AirPods Pro 2",
-    description: "Rebuilt from the sound up with H2 chip for smarter noise cancellation and immersive sound.",
+    description:
+      "Rebuilt from the sound up with H2 chip for smarter noise cancellation and immersive sound.",
     price: 249,
-    image: "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=800&h=800&fit=crop",
     ],
@@ -281,7 +306,8 @@ export const products: Product[] = [
     name: "Nintendo Switch OLED",
     description: "Play at home or on the go with a vibrant 7-inch OLED screen.",
     price: 349,
-    image: "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=800&h=800&fit=crop",
     ],
@@ -301,9 +327,11 @@ export const products: Product[] = [
   {
     id: "11",
     name: "Google Pixel 8 Pro",
-    description: "The best of Google with advanced AI features, stunning camera, and 7 years of updates.",
+    description:
+      "The best of Google with advanced AI features, stunning camera, and 7 years of updates.",
     price: 999,
-    image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&h=800&fit=crop",
     ],
@@ -323,9 +351,11 @@ export const products: Product[] = [
   {
     id: "12",
     name: "Bose QuietComfort Ultra",
-    description: "World-class noise cancellation meets spatial audio for an immersive listening experience.",
+    description:
+      "World-class noise cancellation meets spatial audio for an immersive listening experience.",
     price: 429,
-    image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&h=800&fit=crop",
     ],
@@ -356,4 +386,12 @@ export const getFeaturedProducts = (): Product[] => {
   return products.filter((p) => p.featured);
 };
 
-export const brands = ["Apple", "Samsung", "Sony", "Dell", "Google", "Bose", "Nintendo"];
+export const brands = [
+  "Apple",
+  "Samsung",
+  "Sony",
+  "Dell",
+  "Google",
+  "Bose",
+  "Nintendo",
+];
