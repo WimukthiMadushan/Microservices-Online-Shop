@@ -21,6 +21,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final InventoryClient inventoryClient;
+    private final com.wimukthi.orderservice.client.PaymentClient paymentClient;
     private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
     public void placeOrder(OrderRequest orderRequest) {
@@ -32,6 +33,11 @@ public class OrderService {
             order.setSkuCode(orderRequest.skuCode());
             order.setQuantity(orderRequest.quantity());
             orderRepository.save(order);
+
+            // Call Payment Service
+            com.wimukthi.orderservice.dto.PaymentRequest paymentRequest = new com.wimukthi.orderservice.dto.PaymentRequest(order.getOrderNumber(), order.getPrice().doubleValue(), "CREDIT_CARD");
+            paymentClient.doPayment(paymentRequest);
+            log.info("Payment processed successfully for order {}", order.getOrderNumber());
 
             // send the message to the kafka topic
             var orderPlacedEvent = new OrderPlacedEvent(order.getOrderNumber(), "wimukthimadushan6@gmail.com");

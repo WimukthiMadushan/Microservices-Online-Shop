@@ -16,6 +16,9 @@ public class RestClientConfig {
     @Value("${inventory.url}")
     private String inventoryServiceUrl;
 
+    @Value("${payment.url}")
+    private String paymentServiceUrl;
+
     @Bean
     public InventoryClient inventoryClient() {
         WebClient webClient = WebClient.builder()
@@ -26,4 +29,13 @@ public class RestClientConfig {
         return httpServiceProxyFactory.createClient(InventoryClient.class);
     }
 
+    @Bean
+    public com.wimukthi.orderservice.client.PaymentClient paymentClient() {
+        WebClient webClient = WebClient.builder()
+                .baseUrl(paymentServiceUrl)
+                .build();
+        var webClientAdapter = WebClientAdapter.forClient(webClient);
+        var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return httpServiceProxyFactory.createClient(com.wimukthi.orderservice.client.PaymentClient.class);
+    }
 }
