@@ -1,5 +1,7 @@
 package com.wimukthi.productservice.services;
 
+import com.wimukthi.productservice.client.InventoryClient;
+import com.wimukthi.productservice.dto.InventoryRequest;
 import com.wimukthi.productservice.dto.ProductRequest;
 import com.wimukthi.productservice.dto.ProductResponse;
 import com.wimukthi.productservice.models.Product;
@@ -16,6 +18,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final InventoryClient inventoryClient;
 
     public ProductResponse createProduct(ProductRequest productRequest) {
         Product product = Product.builder()
@@ -25,6 +28,14 @@ public class ProductService {
                 .price(productRequest.getPrice())
                 .build();
         productRepository.save(product);
+
+        InventoryRequest inventoryRequest = InventoryRequest.builder()
+                .skuCode(product.getSkuCode())
+                .quantity(productRequest.getQuantity())
+                .build();
+        
+        inventoryClient.addInventory(inventoryRequest);
+
         log.info("Product created successfully");
         return new ProductResponse(product.getId(), product.getName(), product.getDescription(),
                 product.getSkuCode(),
