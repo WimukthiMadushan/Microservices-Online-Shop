@@ -1,21 +1,24 @@
 package com.wimukthi.productservice.models;
 
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 
-@Document(value = "product")
+@Entity
+@Table(name = "t_products")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Product {
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private String description;
     private String skuCode;

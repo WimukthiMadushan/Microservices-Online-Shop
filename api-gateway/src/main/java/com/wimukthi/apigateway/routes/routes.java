@@ -13,7 +13,6 @@ import org.springframework.web.servlet.function.ServerResponse;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static org.springframework.cloud.gateway.server.mvc.filter.FilterFunctions.uri;
 import static org.springframework.cloud.gateway.server.mvc.filter.FilterFunctions.setPath;
 import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
 
@@ -31,18 +30,16 @@ public class routes {
     @Bean
     public RouterFunction<ServerResponse> productServiceRoute() throws URISyntaxException {
         return route("product_service")
-                .route(RequestPredicates.path("/api/product"), HandlerFunctions.http())
+                .route(RequestPredicates.path("/api/product"), HandlerFunctions.http(productServiceUrl))
                 .filter(CircuitBreakerFilterFunctions.circuitBreaker("productServiceCircuitBreaker",
                         URI.create("forward:/fallbackRoute")))
-                .filter(uri(productServiceUrl))
                 .build();
     }
 
     @Bean
     public RouterFunction<ServerResponse> productServiceSwaggerRoute() {
         return route("product_service_swagger")
-                .route(RequestPredicates.path("/aggregate/product-service/v3/api-docs"), HandlerFunctions.http())
-                .filter(uri(productServiceUrl))
+                .route(RequestPredicates.path("/aggregate/product-service/v3/api-docs"), HandlerFunctions.http(productServiceUrl))
                 .filter(setPath("/api-docs"))
                 .build();
     }
@@ -50,35 +47,32 @@ public class routes {
     @Bean
     public RouterFunction<ServerResponse> orderServiceRoute() {
         return route("order_service")
-                .route(RequestPredicates.path("/api/order"), HandlerFunctions.http())
+                .route(RequestPredicates.path("/api/order"), HandlerFunctions.http(orderServiceUrl))
                 .filter(CircuitBreakerFilterFunctions.circuitBreaker("orderServiceCircuitBreaker",
                         URI.create("forward:/fallbackRoute")))
-                .filter(uri(orderServiceUrl))
                 .build();
     }
     @Bean
     public RouterFunction<ServerResponse> orderServiceSwaggerRoute() {
         return route("order_service_swagger")
-                .route(RequestPredicates.path("/aggregate/order-service/v3/api-docs"), HandlerFunctions.http())
-                .filter(uri(orderServiceUrl))
+                .route(RequestPredicates.path("/aggregate/order-service/v3/api-docs"), HandlerFunctions.http(orderServiceUrl))
                 .filter(setPath("/api-docs"))
                 .build();
     }
 
+    @Bean
     public RouterFunction<ServerResponse> inventoryServiceRoute() {
         return route("inventory_service")
-                .route(RequestPredicates.path("/api/inventory"), HandlerFunctions.http())
+                .route(RequestPredicates.path("/api/inventory"), HandlerFunctions.http(inventoryServiceUrl))
                 .filter(CircuitBreakerFilterFunctions.circuitBreaker("inventoryServiceCircuitBreaker",
                         URI.create("forward:/fallbackRoute")))
-                .filter(uri(inventoryServiceUrl))
                 .build();
     }
 
     @Bean
     public RouterFunction<ServerResponse> inventoryServiceSwaggerRoute() {
         return route("inventory_service_swagger")
-                .route(RequestPredicates.path("/aggregate/inventory-service/v3/api-docs"), HandlerFunctions.http())
-                .filter(uri(inventoryServiceUrl))
+                .route(RequestPredicates.path("/aggregate/inventory-service/v3/api-docs"), HandlerFunctions.http(inventoryServiceUrl))
                 .filter(setPath("/api-docs"))
                 .build();
     }
