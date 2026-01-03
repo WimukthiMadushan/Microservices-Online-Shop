@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { User, MapPin, Package, Settings, LogOut, Edit2, Plus, Trash2 } from "lucide-react";
+import {
+  User,
+  MapPin,
+  Package,
+  Settings,
+  LogOut,
+  Edit2,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +27,7 @@ import {
 import Layout from "@/components/layout/Layout";
 import { mockUser, Order } from "@/data/mockUser";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const getStatusColor = (status: Order["status"]) => {
   switch (status) {
@@ -37,6 +47,7 @@ const getStatusColor = (status: Order["status"]) => {
 };
 
 const Profile = () => {
+  const { userProfile, logout } = useAuth();
   const [user, setUser] = useState(mockUser);
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
@@ -62,7 +73,11 @@ const Profile = () => {
       <div className="container py-8">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold">My Account</h1>
-          <Button variant="outline" className="text-destructive">
+          <Button
+            variant="outline"
+            className="text-destructive"
+            onClick={() => logout()}
+          >
             <LogOut className="mr-2 h-4 w-4" />
             Sign Out
           </Button>
@@ -107,9 +122,15 @@ const Profile = () => {
                   {/* Avatar */}
                   <div className="flex flex-col items-center gap-4">
                     <Avatar className="h-32 w-32">
-                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarImage
+                        src={user.avatar}
+                        alt={userProfile?.firstName || user.name}
+                      />
                       <AvatarFallback className="text-3xl">
-                        {user.name.split(" ").map((n) => n[0]).join("")}
+                        {(userProfile?.firstName || user.name)
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </AvatarFallback>
                     </Avatar>
                     <Button variant="outline" size="sm">
@@ -119,13 +140,20 @@ const Profile = () => {
 
                   {/* Profile Form */}
                   {isEditing ? (
-                    <form onSubmit={handleUpdateProfile} className="flex-1 space-y-4">
+                    <form
+                      onSubmit={handleUpdateProfile}
+                      className="flex-1 space-y-4"
+                    >
                       <div>
                         <Label htmlFor="name">Full Name</Label>
                         <Input
                           id="name"
                           name="name"
-                          defaultValue={user.name}
+                          defaultValue={
+                            userProfile?.firstName
+                              ? `${userProfile.firstName} ${userProfile.lastName}`
+                              : user.name
+                          }
                           className="mt-1"
                         />
                       </div>
@@ -135,7 +163,7 @@ const Profile = () => {
                           id="email"
                           name="email"
                           type="email"
-                          defaultValue={user.email}
+                          defaultValue={userProfile?.email || user.email}
                           className="mt-1"
                         />
                       </div>
@@ -153,15 +181,21 @@ const Profile = () => {
                   ) : (
                     <div className="flex-1 space-y-4">
                       <div>
-                        <p className="text-sm text-muted-foreground">Full Name</p>
+                        <p className="text-sm text-muted-foreground">
+                          Full Name
+                        </p>
                         <p className="font-medium">{user.name}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Email Address</p>
+                        <p className="text-sm text-muted-foreground">
+                          Email Address
+                        </p>
                         <p className="font-medium">{user.email}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Phone Number</p>
+                        <p className="text-sm text-muted-foreground">
+                          Phone Number
+                        </p>
                         <p className="font-medium">{user.phone}</p>
                       </div>
                     </div>
@@ -180,25 +214,27 @@ const Profile = () => {
               <CardContent>
                 <div className="space-y-4">
                   {user.orders.map((order) => (
-                    <div
-                      key={order.id}
-                      className="rounded-lg border p-4"
-                    >
+                    <div key={order.id} className="rounded-lg border p-4">
                       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                         <div>
                           <p className="font-semibold">{order.id}</p>
                           <p className="text-sm text-muted-foreground">
-                            Placed on {new Date(order.date).toLocaleDateString()}
+                            Placed on{" "}
+                            {new Date(order.date).toLocaleDateString()}
                           </p>
                         </div>
                         <Badge className={getStatusColor(order.status)}>
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          {order.status.charAt(0).toUpperCase() +
+                            order.status.slice(1)}
                         </Badge>
                       </div>
 
                       <div className="mb-4 flex flex-wrap gap-4">
                         {order.items.map((item) => (
-                          <div key={item.productId} className="flex items-center gap-3">
+                          <div
+                            key={item.productId}
+                            className="flex items-center gap-3"
+                          >
                             <img
                               src={item.image}
                               alt={item.name}
@@ -217,7 +253,9 @@ const Profile = () => {
                       <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-4">
                         <div>
                           <p className="text-sm text-muted-foreground">Total</p>
-                          <p className="text-lg font-bold">${order.total.toFixed(2)}</p>
+                          <p className="text-lg font-bold">
+                            ${order.total.toFixed(2)}
+                          </p>
                         </div>
                         <div className="flex gap-2">
                           {order.trackingNumber && (
@@ -237,14 +275,21 @@ const Profile = () => {
                               </DialogHeader>
                               <div className="space-y-4">
                                 <div>
-                                  <p className="text-sm font-medium">Shipping Address</p>
+                                  <p className="text-sm font-medium">
+                                    Shipping Address
+                                  </p>
                                   <p className="text-sm text-muted-foreground">
-                                    {order.shippingAddress.street}<br />
-                                    {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
+                                    {order.shippingAddress.street}
+                                    <br />
+                                    {order.shippingAddress.city},{" "}
+                                    {order.shippingAddress.state}{" "}
+                                    {order.shippingAddress.zipCode}
                                   </p>
                                 </div>
                                 <div>
-                                  <p className="text-sm font-medium">Order Summary</p>
+                                  <p className="text-sm font-medium">
+                                    Order Summary
+                                  </p>
                                   <div className="mt-2 space-y-1 text-sm">
                                     <div className="flex justify-between">
                                       <span>Subtotal</span>
@@ -256,7 +301,11 @@ const Profile = () => {
                                     </div>
                                     <div className="flex justify-between">
                                       <span>Shipping</span>
-                                      <span>{order.shipping === 0 ? "Free" : `$${order.shipping.toFixed(2)}`}</span>
+                                      <span>
+                                        {order.shipping === 0
+                                          ? "Free"
+                                          : `$${order.shipping.toFixed(2)}`}
+                                      </span>
                                     </div>
                                     <div className="flex justify-between font-bold">
                                       <span>Total</span>
@@ -294,12 +343,16 @@ const Profile = () => {
                       className="relative rounded-lg border p-4"
                     >
                       {address.isDefault && (
-                        <Badge className="absolute right-4 top-4">Default</Badge>
+                        <Badge className="absolute right-4 top-4">
+                          Default
+                        </Badge>
                       )}
                       <p className="mb-2 font-semibold">{address.label}</p>
                       <p className="text-sm text-muted-foreground">
-                        {address.street}<br />
-                        {address.city}, {address.state} {address.zipCode}<br />
+                        {address.street}
+                        <br />
+                        {address.city}, {address.state} {address.zipCode}
+                        <br />
                         {address.country}
                       </p>
                       <div className="mt-4 flex gap-2">
@@ -307,7 +360,11 @@ const Profile = () => {
                           <Edit2 className="mr-1 h-3 w-3" />
                           Edit
                         </Button>
-                        <Button variant="outline" size="sm" className="text-destructive">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-destructive"
+                        >
                           <Trash2 className="mr-1 h-3 w-3" />
                           Delete
                         </Button>
@@ -338,10 +395,16 @@ const Profile = () => {
                     </div>
                     <div>
                       <Label htmlFor="newPassword">New Password</Label>
-                      <Input id="newPassword" type="password" className="mt-1" />
+                      <Input
+                        id="newPassword"
+                        type="password"
+                        className="mt-1"
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                      <Label htmlFor="confirmPassword">
+                        Confirm New Password
+                      </Label>
                       <Input
                         id="confirmPassword"
                         type="password"
@@ -359,18 +422,22 @@ const Profile = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Notification preferences will be available soon. This is a frontend demo.
+                    Notification preferences will be available soon. This is a
+                    frontend demo.
                   </p>
                 </CardContent>
               </Card>
 
               <Card className="border-destructive">
                 <CardHeader>
-                  <CardTitle className="text-destructive">Danger Zone</CardTitle>
+                  <CardTitle className="text-destructive">
+                    Danger Zone
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="mb-4 text-sm text-muted-foreground">
-                    Once you delete your account, there is no going back. Please be certain.
+                    Once you delete your account, there is no going back. Please
+                    be certain.
                   </p>
                   <Button variant="destructive">Delete Account</Button>
                 </CardContent>

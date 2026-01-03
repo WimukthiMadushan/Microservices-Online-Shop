@@ -26,6 +26,8 @@ public class routes {
     private String orderServiceUrl;
     @Value("${inventory.service.url}")
     private String inventoryServiceUrl;
+    @Value("${cart.service.url}")
+    private String cartServiceUrl;
 
     @Bean
     public RouterFunction<ServerResponse> productServiceRoute() throws URISyntaxException {
@@ -73,6 +75,23 @@ public class routes {
     public RouterFunction<ServerResponse> inventoryServiceSwaggerRoute() {
         return route("inventory_service_swagger")
                 .route(RequestPredicates.path("/aggregate/inventory-service/v3/api-docs"), HandlerFunctions.http(inventoryServiceUrl))
+                .filter(setPath("/api-docs"))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> cartServiceRoute() {
+        return route("cart_service")
+                .route(RequestPredicates.path("/api/cart/**"), HandlerFunctions.http(cartServiceUrl))
+                .filter(CircuitBreakerFilterFunctions.circuitBreaker("cartServiceCircuitBreaker",
+                        URI.create("forward:/fallbackRoute")))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> cartServiceSwaggerRoute() {
+        return route("cart_service_swagger")
+                .route(RequestPredicates.path("/aggregate/cart-service/v3/api-docs"), HandlerFunctions.http(cartServiceUrl))
                 .filter(setPath("/api-docs"))
                 .build();
     }

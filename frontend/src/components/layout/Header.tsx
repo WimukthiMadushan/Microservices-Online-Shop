@@ -3,7 +3,9 @@ import { ShoppingCart, User, Menu, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sheet,
   SheetContent,
@@ -13,6 +15,7 @@ import {
 
 const Header = () => {
   const { itemCount } = useCart();
+  const { isAuthenticated, login, userProfile, hasRole } = useAuth();
   const [searchOpen, setSearchOpen] = useState(false);
 
   const navLinks = [
@@ -51,10 +54,7 @@ const Header = () => {
         <div className="hidden flex-1 items-center justify-center px-8 md:flex">
           <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search products..."
-              className="w-full pl-10"
-            />
+            <Input placeholder="Search products..." className="w-full pl-10" />
           </div>
         </div>
 
@@ -67,15 +67,37 @@ const Header = () => {
             className="md:hidden"
             onClick={() => setSearchOpen(!searchOpen)}
           >
-            {searchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
+            {searchOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Search className="h-5 w-5" />
+            )}
           </Button>
 
           {/* User Menu */}
-          <Link to="/profile">
-            <Button variant="ghost" size="icon">
+          {isAuthenticated ? (
+            <Link to="/profile" className="flex items-center gap-2">
+              <Button variant="ghost" className="flex items-center gap-2 px-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    {userProfile?.username?.charAt(0).toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="hidden flex-col items-start text-left md:flex">
+                  <span className="text-sm font-medium leading-none">
+                    {userProfile?.username || userProfile?.email || "User"}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {hasRole("admin") ? "Admin" : "User"}
+                  </span>
+                </div>
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="ghost" size="icon" onClick={() => login()}>
               <User className="h-5 w-5" />
             </Button>
-          </Link>
+          )}
 
           {/* Cart */}
           <Link to="/cart" className="relative">
