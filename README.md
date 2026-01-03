@@ -40,11 +40,7 @@ The diagram below represents the overall architecture of the system.
 It shows how different services interact with each other to process product orders, validate inventory, and send notifications.
 
 <div align="center">
-  <img 
-    src="https://github.com/user-attachments/assets/b623d180-4062-478a-93da-c6573b572e70" 
-    alt="System Architecture Diagram" 
-    width="100%" 
-  />
+  <img width="1107" height="669" alt="image" src="https://github.com/user-attachments/assets/2d82bca7-97f5-416a-8592-ea6a11d20e3d" />
 </div>
 
 ---
