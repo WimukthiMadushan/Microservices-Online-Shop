@@ -6,6 +6,8 @@ import com.wimukthi.orderservice.dto.OrderRequest;
 import com.wimukthi.orderservice.event.OrderPlacedEvent;
 import com.wimukthi.orderservice.models.Order;
 import com.wimukthi.orderservice.repositories.OrderRepository;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,35 +22,33 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final InventoryClient inventoryClient;
-    private final com.wimukthi.orderservice.client.PaymentClient paymentClient;
+    // InventoryClient is now used inside the Chain of Responsibility
+    private final com.wimukthi.orderservice.chain.OrderRequestValidator orderRequestValidator;
+    private final com.wimukthi.orderservice.strategy.PaymentStrategyFactory paymentStrategyFactory;
     private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
+    @Transactional
     public void placeOrder(OrderRequest orderRequest) {
-        var isInProduct = inventoryClient.isInStock(orderRequest.skuCode(), orderRequest.quantity());
-        if(isInProduct) {
-            Order order = new Order();
-            order.setOrderNumber(UUID.randomUUID().toString());
-            order.setPrice(orderRequest.price().multiply(BigDecimal.valueOf(orderRequest.quantity())));
-            order.setSkuCode(orderRequest.skuCode());
-            order.setQuantity(orderRequest.quantity());
-            orderRepository.save(order);
+        // Validate Order using Chain of Responsibility (Inventory Check, etc.)
+        orderRequestValidator.validate(orderRequest);
 
-            // Call Payment Service
-            com.wimukthi.orderservice.dto.PaymentRequest paymentRequest = new com.wimukthi.orderservice.dto.PaymentRequest(order.getOrderNumber(), order.getPrice().doubleValue(), "CREDIT_CARD");
-            paymentClient.doPayment(paymentRequest);
-            log.info("Payment processed successfully for order {}", order.getOrderNumber());
+        // If validation passed, proceed with order creation
+        Order order = new Order();
+        order.setOrderNumber(UUID.randomUUID().toString());
+        order.setPrice(orderRequest.price().multiply(BigDecimal.valueOf(orderRequest.quantity())));
+        order.setSkuCode(orderRequest.skuCode());
+        order.setQuantity(orderRequest.quantity());
+        orderRepository.save(order);
 
-            // send the message to the kafka topic
-            var orderPlacedEvent = new OrderPlacedEvent(order.getOrderNumber(), "wimukthimadushan6@gmail.com");
-            log.info("Order Placed Event is {}", orderPlacedEvent);
-            kafkaTemplate.send("order-placed", orderPlacedEvent);
+        // Call Payment Service via Strategy
+        var paymentStrategy = paymentStrategyFactory.getStrategy(orderRequest.paymentMethod());
+        paymentStrategy.processPayment(order.getOrderNumber(), order.getPrice());
+        log.info("Payment processed successfully for order {} using {}", order.getOrderNumber(), paymentStrategy.getPaymentType());
 
-        }
-        else  {
-            throw new RuntimeException("Product with SkuCode " + orderRequest.skuCode() + " is not in stock");
-        }
-
+        // send the message to the kafka topic
+        var orderPlacedEvent = new OrderPlacedEvent(order.getOrderNumber(), "wimukthimadushan6@gmail.com");
+        log.info("Order Placed Event is {}", orderPlacedEvent);
+        kafkaTemplate.send("order-placed", orderPlacedEvent);
     }
 
 }
