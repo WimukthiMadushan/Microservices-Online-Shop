@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash("Cart")
+@RedisHash(value = "Cart", timeToLive = 172800)
 public class Cart {
     @Id
     private String id;
